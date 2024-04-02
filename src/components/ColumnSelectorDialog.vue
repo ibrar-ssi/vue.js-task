@@ -25,8 +25,8 @@
         <!-- Modal body -->
          
         <div class="relative p-4">
-        <div class="column-options">
-        <label class="pr-2" v-for="(column, index) in availableColumns" :key="index">
+        <div class="column-list">
+        <label class="columns-6 pl-2" v-for="(column, index) in availableColumns" :key="index">
           <input type="checkbox" v-model="selectedColumns" :value="column">{{ column }}
         </label>
       </div>
@@ -57,10 +57,12 @@ export default {
     title: String,
     showModal: Boolean,
     availableColumns: Array,
+    initiallySelectedColumns: Array
+
   },
   data() {
     return {
-      selectedColumns: [],
+      selectedColumns: [...this.initiallySelectedColumns],
     };
   },
   methods: {
@@ -78,4 +80,10 @@ export default {
 </script>
 
 <style>
+.column-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 300px;
+   overflow-y: auto;
+}
 </style>
