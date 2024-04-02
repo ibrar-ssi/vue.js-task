@@ -4,6 +4,7 @@
          <button @click="openColumnSelector" class="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none">Select Columns</button>
      </div>
       <column-selector-dialog
+      :initiallySelectedColumns="displayedColumns"
       :availableColumns="availableColumns"
       :showModal="dialogVisible"
       @close="closeDialog"
