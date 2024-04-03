@@ -4,6 +4,7 @@
          <button @click="openColumnSelector" class="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none">Select Columns</button>
      </div>
       <column-selector-dialog
+      :initiallySelectedColumns="displayedColumns"
       :availableColumns="availableColumns"
       :showModal="dialogVisible"
       @close="closeDialog"
@@ -23,18 +24,30 @@
         <tbody>
           <tr v-for="data in sortedData" :key="data.id">
             <td v-for="column in displayedColumns" :key="column" class="border px-4 py-2">
-            <template v-if="column === 'image'">
+              <template v-if="column === 'image'">
                 <img :src="data.image" alt="Crypto Image" class="h-8 w-8 rounded-full">
               </template>
+              <template v-else-if="column === 'ath_date' || column === 'atl_date' || column === 'last_updated'">
+                {{ formatDate(data[column]) }}
+              </template>
                <template v-else-if="column === 'name + symbol'">
-                {{ data['name'] }} ({{ data['symbol'] }})
+                {{ data['name'] }} {{ data['symbol'] }}
               </template>
 
+              <template v-else-if="column === 'roi'">
+                <span v-if="data.roi && data.roi.times">
+                  Times: {{formatTimes(data?.roi?.times)}}
+                </span>
+                <span v-if="data.roi && data.roi.currency">
+                  Currency: {{data?.roi?.currency}}
+                </span>
+                <span v-if="data.roi && data.roi.percentage">
+                  Percentage: {{formatTimes(data?.roi?.percentage)}}
+                </span>
+              </template>
               <template v-else>
                 {{ data[column] }}
               </template>
-
-
             </td>
           </tr>
         </tbody>
@@ -44,7 +57,6 @@
 
 <script>
 import ColumnSelectorDialog  from './ColumnSelectorDialog.vue';
-
 import axios from 'axios';
 export default {
   components: {
@@ -79,6 +91,7 @@ export default {
     }
   },
   methods: {
+  
     sortBy(key) {
       if (this.sortKey === key) {
         this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
@@ -111,6 +124,22 @@ export default {
       this.displayedColumns = selectedColumns;
        this.dialogVisible = false;
     },
+       formatDate(dateString) {
+      const date = new Date(dateString);
+      const formattedDate = date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      return formattedDate;
+    },
+    formatTimes(number) {
+      if (number !== null && !isNaN(number)) {
+        return number.toFixed(2);
+      } else {
+        return number
+      }
+    }
   },
     created() {
     this.fetchData();

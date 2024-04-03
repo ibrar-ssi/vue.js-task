@@ -1,16 +1,13 @@
 <template>
   <div>
-    <!--Verically centered scrollable modal-->
     <div  v-if="showModal" @click.self="closeDialog"
       class="fixed left-0 top-0 z-[1055] inset-0 flex items-center justify-center overflow-auto bg-gray-800 bg-opacity-50">
       <div
         class="relative w-full max-w-md p-6 bg-white rounded-lg shadow-md">
         <div class="flex justify-between items-center pb-4">
-          <!-- Modal title -->
           <h5 class="text-xl font-medium leading-normal text-gray-900">
             Select Column to select
           </h5>
-          <!-- Close button -->
           <button
             type="button"
             @click="closeDialog"
@@ -21,17 +18,14 @@
               </path>
             </svg>
           </button>
-        </div>
-        <!-- Modal body -->
-         
+        </div>         
         <div class="relative p-4">
-        <div class="column-options">
+        <div class="column-list ">
         <label class="pr-2" v-for="(column, index) in availableColumns" :key="index">
-          <input type="checkbox" v-model="selectedColumns" :value="column">{{ column }}
+          <input type="checkbox" v-model="selectedColumns" :value="column"> {{ snakeToCamelCase(column) }}
         </label>
       </div>
         </div>
-        <!-- Modal footer -->
         <div class="flex justify-end space-x-4">
           <button
             type="button"
@@ -57,10 +51,11 @@ export default {
     title: String,
     showModal: Boolean,
     availableColumns: Array,
+    initiallySelectedColumns: Array
   },
   data() {
     return {
-      selectedColumns: [],
+      selectedColumns: [...this.initiallySelectedColumns],
     };
   },
   methods: {
@@ -73,9 +68,20 @@ export default {
      confirmSelection() {
       this.$emit('columns-selected', this.selectedColumns);
     },
+      snakeToCamelCase(str) {
+      return str.replace(/_/g, ' ').replace(/\b\w/g, match => match.toUpperCase());
+    },
   }
 };
 </script>
 
 <style>
+.column-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 300px;
+  overflow-y: auto;
+  flex-wrap: wrap;
+}
+
 </style>
